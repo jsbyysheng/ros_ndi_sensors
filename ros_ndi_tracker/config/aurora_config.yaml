@@ -1,0 +1,15 @@
+ndi_sensor:
+  marker: [
+    {
+      id: 10,
+      name: Ultrasonic
+    },
+    {
+      id: 11,
+      name: Probe
+    },
+    {
+      id: 12,
+      name: UR_Robot
+    }
+  ]
