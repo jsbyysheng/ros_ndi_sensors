@@ -1,4 +1,4 @@
-ndi_sensor:
+aurora_sensor:
   marker: [
     {
       id: 10,
@@ -11,5 +11,9 @@ ndi_sensor:
     {
       id: 12,
       name: UR_Robot
-    }
+    },
+    {
+      id: 13,
+      name: Aim_Track
+    },
   ]
