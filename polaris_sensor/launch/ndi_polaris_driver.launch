@@ -1,13 +1,17 @@
 <launch>
 
+    <arg name="use_rivz" default="true" />
+    <arg name="ndi_polaris_sensor" default="/dev/ttyUSB2"/>
+    <arg name="ndi_world_base" default="polaris_base_link"/>
+    <!--Find the rom file that you want to track, you can also load mutiple roms by using ',' to split the different roms" /-->
+    <arg name="ndi_polaris_roms" default="$(find ros_ndi_tracker)/config/roms/apple02.rom,$(find ros_ndi_tracker)/config/roms/apple03.rom,$(find ros_ndi_tracker)/config/roms/apple04.rom,$(find ros_ndi_tracker)/config/roms/apple05.rom,$(find ros_ndi_tracker)/config/roms/apple06.rom"/>
+
     <node name="polaris_ros_node" pkg="polaris_sensor" type="polaris_sensor_node" respawn="true" output="screen">
-
-      <!--Find the rom file that you want to track, you can also load mutiple roms by using ',' to split the different roms" /-->
-      <param name="roms" value="$(find polaris_sensor)/rom/8700339.rom"/>
-   
-      <!--connect the usb port of the pc -->
-      <param name="port" value="/dev/ttyUSB0"/>
-
+      <param name="roms" value="$(arg ndi_polaris_roms)"/>
+      <param name="port" value="$(arg ndi_polaris_sensor)"/>
+      <param name="world" value="$(arg ndi_world_base)"/>
     </node>
+
+    <node pkg="rviz" type="rviz" name="rviz" args="-d $(find polaris_sensor)/config/view.rviz" if="$(arg use_rivz)" /> 
 
 </launch>
