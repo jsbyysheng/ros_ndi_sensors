@@ -1,28 +1,27 @@
 // ROS
-#include <ros/ros.h>
 #include <geometry_msgs/PoseArray.h>
+#include <polaris_sensor/polaris_sensor.h>
+#include <ros/ros.h>
 #include <sensor_msgs/PointCloud.h>
 #include <serial/serial.h>
-#include <polaris_sensor/polaris_sensor.h>
+#include <std_msgs/Float32.h>
+#include <tf/transform_broadcaster.h>  // !!! add the tf .h
+
+#include <algorithm>
 #include <boost/algorithm/string.hpp>
 #include <boost/filesystem.hpp>
-#include <algorithm>
-#include <fstream>
-#include <std_msgs/Float32.h>
 #include <ctime>
+#include <fstream>
 #include <iostream>
-
-#include <tf/transform_broadcaster.h>  // !!! add the tf .h
 
 bool fexists(const std::string &filename) {
     std::ifstream ifile(filename.c_str());
-    return (bool) ifile;
+    return (bool)ifile;
 }
 
 using namespace boost;
 using namespace std;
 using namespace polaris;
-
 
 bool nexists(const std::string &r) {
     if (!fexists(r)) {
@@ -35,11 +34,11 @@ bool nexists(const std::string &r) {
 string gen_random(const int len) {
     string tmp_s;
     static const char alphanum[] =
-            "0123456789";
-//            "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-//            "abcdefghijklmnopqrstuvwxyz";
+        "0123456789";
+    //            "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    //            "abcdefghijklmnopqrstuvwxyz";
 
-    srand((unsigned) time(NULL) * getpid());
+    srand((unsigned)time(NULL) * getpid());
 
     tmp_s.reserve(len);
 
@@ -49,7 +48,6 @@ string gen_random(const int len) {
 }
 
 string getFileName(const string &s, const string &default_val) {
-
     char sep = '/';
     char dot = '.';
 
@@ -89,38 +87,38 @@ int main(int argc, char **argv) {
     else
         ROS_INFO("Using camera name: %s", camera.c_str());
 
-    std::string world("world");
-    if (!nh.getParam("world", world))
-        ROS_WARN("Using default world name: %s", world.c_str());
-    else
-        ROS_INFO("Using world name: %s", world.c_str());
+    // std::string world("world");
+    // if (!nh.getParam("world", world))
+    //     ROS_WARN("Using default world name: %s", world.c_str());
+    // else
+    //     ROS_INFO("Using world name: %s", world.c_str());
 
-    double world_to_ndi_base_link_x;
-    double world_to_ndi_base_link_y;
-    double world_to_ndi_base_link_z;
-    double world_to_ndi_base_link_rr;
-    double world_to_ndi_base_link_rp;
-    double world_to_ndi_base_link_ry;
+    // double world_to_polaris_base_link_x;
+    // double world_to_polaris_base_link_y;
+    // double world_to_polaris_base_link_z;
+    // double world_to_polaris_base_link_rr;
+    // double world_to_polaris_base_link_rp;
+    // double world_to_polaris_base_link_ry;
 
-    ros::NodeHandle nh_param(ros::this_node::getNamespace());
-    nh_param.param("/world_to_ndi_base_link/x", world_to_ndi_base_link_x, 0.0);
-    nh_param.param("/world_to_ndi_base_link/y", world_to_ndi_base_link_y, 0.0);
-    nh_param.param("/world_to_ndi_base_link/z", world_to_ndi_base_link_z, 0.0);
-    nh_param.param("/world_to_ndi_base_link/rr", world_to_ndi_base_link_rr, 0.0);
-    nh_param.param("/world_to_ndi_base_link/rp", world_to_ndi_base_link_rp, 0.0);
-    nh_param.param("/world_to_ndi_base_link/ry", world_to_ndi_base_link_ry, 0.0);
+    // ros::NodeHandle nh_param(ros::this_node::getNamespace());
+    // nh_param.param("/world_to_polaris_base_link/x", world_to_polaris_base_link_x, 0.0);
+    // nh_param.param("/world_to_polaris_base_link/y", world_to_polaris_base_link_y, 0.0);
+    // nh_param.param("/world_to_polaris_base_link/z", world_to_polaris_base_link_z, 0.0);
+    // nh_param.param("/world_to_polaris_base_link/rr", world_to_polaris_base_link_rr, 0.0);
+    // nh_param.param("/world_to_polaris_base_link/rp", world_to_polaris_base_link_rp, 0.0);
+    // nh_param.param("/world_to_polaris_base_link/ry", world_to_polaris_base_link_ry, 0.0);
 
-    tf::Transform transform_world_to_ndi_base_link;
-    tf::Quaternion q_world_to_ndi_base_link;
-    q_world_to_ndi_base_link.setRPY(
-            world_to_ndi_base_link_rr,
-            world_to_ndi_base_link_rp,
-            world_to_ndi_base_link_ry);
-    transform_world_to_ndi_base_link.setOrigin(tf::Vector3(
-            world_to_ndi_base_link_x,
-            world_to_ndi_base_link_y,
-            world_to_ndi_base_link_z));
-    transform_world_to_ndi_base_link.setRotation(q_world_to_ndi_base_link);
+    // tf::Transform transform_world_to_polaris_base_link;
+    // tf::Quaternion q_world_to_polaris_base_link;
+    // q_world_to_polaris_base_link.setRPY(
+    //         world_to_polaris_base_link_rr,
+    //         world_to_polaris_base_link_rp,
+    //         world_to_polaris_base_link_ry);
+    // transform_world_to_polaris_base_link.setOrigin(tf::Vector3(
+    //         world_to_polaris_base_link_x,
+    //         world_to_polaris_base_link_y,
+    //         world_to_polaris_base_link_z));
+    // transform_world_to_polaris_base_link.setRotation(q_world_to_polaris_base_link);
 
     std::vector<std::string> roms;
     std::string tmp;
@@ -168,7 +166,6 @@ int main(int argc, char **argv) {
         /* Start TX */
         std::string status;
 
-
         ros::Time start = ros::Time::now();
 
         polaris.readDataTX(status, targets);
@@ -189,12 +186,12 @@ int main(int argc, char **argv) {
 
         std::map<int,TransformationDataBX>::iterator it = targets.begin();*/
 
-        broadcaster.sendTransform(
-                tf::StampedTransform(
-                        transform_world_to_ndi_base_link,
-                        ros::Time::now(), 
-                        world,
-                        "ndi_base_link"));  // !!! broadcast tf frame of ndi base link
+        // broadcaster.sendTransform(
+        //         tf::StampedTransform(
+        //                 transform_world_to_polaris_base_link,
+        //                 ros::Time::now(),
+        //                 world,
+        //                 "polaris_base_link"));  // !!! broadcast tf frame of ndi base link
 
         unsigned int i = 0;
         for (it = targets.begin(); it != targets.end(); ++it) {
@@ -238,20 +235,20 @@ int main(int argc, char **argv) {
                 targets_pose.poses[i].orientation.w = 1.0;
             }
             broadcaster.sendTransform(
-                    tf::StampedTransform(
-                            tf::Transform(
-                                    tf::Quaternion(
-                                            targets_pose.poses[i].orientation.x,
-                                            targets_pose.poses[i].orientation.y,
-                                            targets_pose.poses[i].orientation.z,
-                                            targets_pose.poses[i].orientation.w),
-                                    tf::Vector3(
-                                            targets_pose.poses[i].position.x,
-                                            targets_pose.poses[i].position.y,
-                                            targets_pose.poses[i].position.z)),
-                            ros::Time::now(),
-                            "ndi_base_link",
-                            ndi_marker_links[i]));
+                tf::StampedTransform(
+                    tf::Transform(
+                        tf::Quaternion(
+                            targets_pose.poses[i].orientation.x,
+                            targets_pose.poses[i].orientation.y,
+                            targets_pose.poses[i].orientation.z,
+                            targets_pose.poses[i].orientation.w),
+                        tf::Vector3(
+                            targets_pose.poses[i].position.x,
+                            targets_pose.poses[i].position.y,
+                            targets_pose.poses[i].position.z)),
+                    ros::Time::now(),
+                    "polaris_base_link",
+                    ndi_marker_links[i]));
         }
 
         ros::spinOnce();
