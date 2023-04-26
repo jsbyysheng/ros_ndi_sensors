@@ -1,19 +1,19 @@
 aurora_sensor:
   marker: [
     {
-      id: 10,
+      rom_id: 0,
       name: Ultrasonic
     },
     {
-      id: 11,
+      rom_id: 1,
       name: Probe
     },
     {
-      id: 12,
+      rom_id: 2,
       name: UR_Robot
     },
     {
-      id: 13,
+      rom_id: 3,
       name: Aim_Track
-    },
+    }
   ]

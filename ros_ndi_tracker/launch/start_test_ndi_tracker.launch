@@ -1,15 +1,13 @@
 <launch>
     <arg name="DEBUG_OUTPUT" default="false"/>
-    <arg name="config" default="$(find ros_ndi_tracker)/config/aurora_config.yaml"/>
-    <arg name="config_param_name" default="aurora_sensor/marker"/>
-    <arg name="tracker_type" default="aurora"/>
-    <arg name="port" default="/dev/ttyUSB1"/>
-    <arg name="base_link_name" default="aurora_base_link"/>
+    <arg name="config" default="$(find ros_ndi_tracker)/config/polaris_config.yaml"/>
+    <arg name="tracker_type" default="polaris"/>
+    <arg name="port" default="/dev/ttyUSB2"/>
+    <arg name="base_link_name" default="polaris_base_link"/>
     <arg name="use_rivz" default="false"/>
     
-    <node name="aurora_sensor" pkg="ros_ndi_tracker" type="broadcast_ndi_sensor.py" output="screen">
+    <node name="polaris_sensor" pkg="ros_ndi_tracker" type="test_ndi_tracker.py" output="screen">
         <rosparam file="$(arg config)" command="load" subst_value="True"/>
-        <param name="config_param_name" value="$(arg config_param_name)"/>
         <param name="base_link_name" value="$(arg base_link_name)"/>
         <param name="port" value="$(arg port)"/>
         <param name="tracker_type" value="$(arg tracker_type)"/>

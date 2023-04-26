@@ -10,7 +10,6 @@ from ros_ndi_tracker.msg import NDISensor
 from roscpp.srv import SetLoggerLevel
 from sksurgerynditracker.nditracker import NDITracker
 
-
 class NDI_Sensor:
     def __init__(self) -> None:
         rospy.init_node('ndi_sensor_node', anonymous=True)
@@ -25,26 +24,24 @@ class NDI_Sensor:
         self._tracker_type = rospy.get_param(f"{rospy.get_name()}/tracker_type")
         self._port = rospy.get_param(f"{rospy.get_name()}/port")
         self._base_link_name = rospy.get_param(f"{rospy.get_name()}/base_link_name")
+        self._config_param_name = rospy.get_param(f"{rospy.get_name()}/config_param_name")
 
         self._markers = {}
+        self._port_handles_map = {}
 
-        if self._tracker_type == 'aurora':
-            markers = rospy.get_param(f"{rospy.get_name()}/aurora_sensor/marker")
-            
-            for marker in markers:
-                self._markers[marker['id']] = marker['name']
-        else:
-            pass
+        self._markers_param = rospy.get_param(f"{rospy.get_name()}/{self._config_param_name}")
+        for marker in self._markers_param:
+            self._markers[marker['rom_id']] = marker['name']
 
         self._br = tf2_ros.TransformBroadcaster()
         self._pub = rospy.Publisher(f"{rospy.get_name()}/sensor_data", NDISensor, queue_size=10)
         self._ndi_sensor_msg = NDISensor()
 
         rospy.loginfo(f"{self._tag} - __init__()")
-        rospy.loginfo(f"{self._tag} - \
-                      Tracker Type: {self._tracker_type}, \
-                      Port: {self._port}, \
-                      Base Link: {self._base_link_name} \
+        rospy.loginfo(f"{self._tag} - \n \
+                      Tracker Type: {self._tracker_type}, \n \
+                      Port: {self._port}, \n \
+                      Base Link: {self._base_link_name} \n \
                       N Markers: {len(self._markers)}")
 
         rospy.on_shutdown(self._shutdown)
@@ -64,8 +61,8 @@ class NDI_Sensor:
             if math.isnan(tracking[idx, 0, 0]) or timestamps[idx] == 0.0:
                 continue
             self._ndi_sensor_msg.port_handles[idx] = port_handles[idx]
-            if port_handles[idx] in self._markers:
-                self._ndi_sensor_msg.marker_names[idx] = self._markers[port_handles[idx]]
+            if port_handles[idx] in self._port_handles_map.keys():
+                self._ndi_sensor_msg.marker_names[idx] = f'{self._tracker_type}_{self._port_handles_map[port_handles[idx]]}'
             else:
                 self._ndi_sensor_msg.marker_names[idx] = f"marker_{idx}"
             self._ndi_sensor_msg.timestamps[idx] = timestamps[idx]
@@ -103,14 +100,21 @@ class NDI_Sensor:
             "tracker type": self._tracker_type,
             "serial port": self._port,
         }
+        if self._tracker_type == 'polaris':
+            SETTINGS['romfiles'] = [marker['rom_id'] for marker in self._markers_param]
+
+        print(SETTINGS)
+
         rospy.loginfo(f"{self._tag} - Create NDITracker object.")
         self.TRACKER = NDITracker(SETTINGS)
         rospy.loginfo(f"{self._tag} - Start NDI {self._tracker_type} Tracking.")
+        for port_handle, rom_id in zip(*self.TRACKER.get_tool_descriptions()):
+            self._port_handles_map[port_handle] = self._markers[rom_id]
+
         self.TRACKER.start_tracking()
         rospy.loginfo(f"{self._tag} - NDI {self._tracker_type} Tracking is ready.")
 
-        port_handles, timestamps, framenumbers, tracking, quality = self.TRACKER.get_frame()
-        n_tools = len(port_handles)
+        n_tools = len(self._port_handles_map)
         self._ndi_sensor_msg.port_handles = [0] * n_tools
         self._ndi_sensor_msg.marker_names = ['marker'] * n_tools
         self._ndi_sensor_msg.timestamps = [0.0] * n_tools

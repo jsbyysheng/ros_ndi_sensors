@@ -1,0 +1,23 @@
+polaris_sensor:
+  marker: [
+    {
+      rom_id: $(find ros_ndi_tracker)/config/roms/apple02.rom,
+      name: apple02
+    },
+    {
+      rom_id: $(find ros_ndi_tracker)/config/roms/apple03.rom,
+      name: apple03
+    },
+    {
+      rom_id: $(find ros_ndi_tracker)/config/roms/apple04.rom,
+      name: apple04
+    },
+    {
+      rom_id: $(find ros_ndi_tracker)/config/roms/apple05.rom,
+      name: apple05
+    },
+    {
+      rom_id: $(find ros_ndi_tracker)/config/roms/apple06.rom,
+      name: apple06
+    },
+  ]
