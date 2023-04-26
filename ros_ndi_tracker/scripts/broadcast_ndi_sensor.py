@@ -62,9 +62,9 @@ class NDI_Sensor:
                 continue
             self._ndi_sensor_msg.port_handles[idx] = port_handles[idx]
             if port_handles[idx] in self._port_handles_map.keys():
-                self._ndi_sensor_msg.marker_names[idx] = f'{self._tracker_type}_{self._port_handles_map[port_handles[idx]]}'
+                self._ndi_sensor_msg.marker_names[idx] = f'{self._port_handles_map[port_handles[idx]]}'
             else:
-                self._ndi_sensor_msg.marker_names[idx] = f"marker_{idx}"
+                self._ndi_sensor_msg.marker_names[idx] = f"{self._tracker_type}_marker_{idx}"
             self._ndi_sensor_msg.timestamps[idx] = timestamps[idx]
             self._ndi_sensor_msg.framenumbers[idx] = framenumbers[idx]
             self._ndi_sensor_msg.quality[idx] = quality[idx]
