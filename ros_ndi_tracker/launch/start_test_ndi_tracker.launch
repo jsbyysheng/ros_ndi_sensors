@@ -6,7 +6,7 @@
     <arg name="base_link_name" default="polaris_base_link"/>
     <arg name="use_rivz" default="false"/>
     
-    <node name="polaris_sensor" pkg="ros_ndi_tracker" type="test_ndi_tracker.py" output="screen">
+    <node name="polaris_sensor" pkg="ros_ndi_tracker" type="test_ndi_tracker_02.py" output="screen">
         <rosparam file="$(arg config)" command="load" subst_value="True"/>
         <param name="base_link_name" value="$(arg base_link_name)"/>
         <param name="port" value="$(arg port)"/>
